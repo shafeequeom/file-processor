@@ -1,17 +1,12 @@
-# Al POS System Backend
+# File processor
 
 
 ## About
 
-POS System for Restaurant
+Backend for file processor
 ## Features
 
-- User Registration
-- User Authentication
-- Token validation
-- POS System
-- Reporting
-- Analytics
+- Upload logs
 
 ## Installation
 
