@@ -3,11 +3,13 @@ import { Readable } from 'stream';
 
 
 export async function insertStatsToSupabase(payload: {
+    jobId: string;
     fileId: string;
     keywords: Record<string, number>;
     ipAddresses: string[];
 }) {
     const { error } = await supabase.from('log_stats').insert({
+        job_id: payload.jobId,
         file_id: payload.fileId,
         keywords: payload.keywords,
         ip_addresses: payload.ipAddresses,

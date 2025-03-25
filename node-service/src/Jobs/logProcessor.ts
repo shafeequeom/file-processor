@@ -4,6 +4,7 @@ import config from '../Common/Config/config';
 import { downloadLogFileStream, insertStatsToSupabase } from '../Service/supabase';
 
 export const processLogJob = async (job: Job) => {
+
     const { filePath, fileId } = job.data;
 
     console.log(`📥 Processing log file: ${filePath}`);
@@ -45,6 +46,7 @@ export const processLogJob = async (job: Job) => {
 
     // Store parsed results in Supabase
     await insertStatsToSupabase({
+        jobId: String(job.id),
         fileId,
         keywords: Object.fromEntries(stats.keywordMatches),
         ipAddresses: Array.from(stats.ipAddresses),

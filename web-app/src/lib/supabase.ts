@@ -1,13 +1,7 @@
-import { createClient } from '@supabase/supabase-js';
 import fs from 'fs';
 import { v4 as uuid } from 'uuid';
 import type { File } from 'formidable';
-
-
-const supabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
-);
+import { supabase } from '@/util/supabase'
 
 export async function uploadToSupabase(file: File, fileId = uuid()) {
     const filePath = `logs/${fileId}.log`;
