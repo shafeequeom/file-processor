@@ -1,11 +1,12 @@
+import { errorResponse, notFoundResponse, successResponse } from '@/util/apiResponse';
 import { supabase } from '@/util/supabase';
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest, { params }: { params: { jobId: string } }) {
     const { jobId } = params;
 
     if (!jobId) {
-        return NextResponse.json({ error: 'Missing jobId' }, { status: 400 });
+        return errorResponse('Job ID is required');
     }
 
     const { data, error } = await supabase
@@ -16,8 +17,8 @@ export async function GET(req: NextRequest, { params }: { params: { jobId: strin
 
     if (error) {
         console.error('❌ Failed to fetch stats:', error.message);
-        return NextResponse.json({ error: 'Stats not found' }, { status: 404 });
+        return notFoundResponse("File not found");
     }
 
-    return NextResponse.json(data, { status: 200 });
+    return successResponse('Stats fetched successfully', data);
 }

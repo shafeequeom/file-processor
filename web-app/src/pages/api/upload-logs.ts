@@ -12,7 +12,7 @@ export const config = {
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
-        return res.status(405).json({ error: 'Method Not Allowed' });
+        return res.status(405).json({ status: false, message: 'Method Not Allowed' });
     }
 
     const form = formidable({
@@ -34,14 +34,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const file = fileArray[0];
 
     if (!file || !file.filepath) {
-        return res.status(400).json({ error: 'No file uploaded' });
+        return res.status(400).json({ status: false, message: 'No file uploaded' });
     }
 
     const fileId = uuid();
     const upload = await uploadToSupabase(file, fileId);
 
     if (!upload) {
-        return res.status(500).json({ error: 'Upload failed' });
+        return res.status(500).json({ status: false, message: 'Upload failed' });
     }
 
     const job = await logQueue.add('process-log', {
@@ -49,5 +49,5 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         fileId: upload.fileId,
     });
 
-    return res.status(200).json({ jobId: job.id });
+    return res.status(200).json({ status: true, data: { jobId: job.id }, message: 'File uploaded successfully' });
 }
