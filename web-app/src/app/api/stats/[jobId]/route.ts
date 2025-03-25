@@ -2,8 +2,8 @@ import { errorResponse, notFoundResponse, successResponse } from '@/util/apiResp
 import { supabase } from '@/util/supabase';
 import { NextRequest } from 'next/server';
 
-export async function GET(req: NextRequest, { params }: { params: { jobId: string } }) {
-    const { jobId } = params;
+export async function GET(req: NextRequest, context: { params: { jobId: string } }) {
+    const { jobId } = context.params;
 
     if (!jobId) {
         return errorResponse('Job ID is required');
