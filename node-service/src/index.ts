@@ -1,5 +1,6 @@
 
 import { App } from "./app";
+import { startWorker } from './Worker'
 
 
 class Server {
@@ -8,6 +9,7 @@ class Server {
 
     constructor() {
         this.express = new App();
+        startWorker();
     }
 
 }

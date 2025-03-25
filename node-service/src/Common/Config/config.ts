@@ -10,6 +10,11 @@ function getValidationObject() {
         NODE_ENV: Joi.string().valid('production', 'development', 'test', 'dev').required(),
         PORT: Joi.number().default(3001),
         SERVER: Joi.string().default('http://localhost:3000'),
+        REDIS_HOST: Joi.string().required(),
+        REDIS_PORT: Joi.number().default(6379),
+        BULLMQ_QUEUE_NAME: Joi.string().default('log-processing-queue'),
+        BULLMQ_CONCURRENCY: Joi.number().default(4),
+        KEYWORDS: Joi.string().default('ERROR,FAIL,EXCEPTION'),
     };
 
     return JoiValidationContent;
@@ -30,4 +35,16 @@ export default {
     env: envVars.NODE_ENV,
     port: envVars.PORT,
     server: envVars.SERVER,
+    /** Redis configuration */
+    redis: {
+        host: envVars.REDIS_HOST,
+        port: envVars.REDIS_PORT,
+    },
+    /** BullMQ configuration */
+    bullmq: {
+        queueName: envVars.BULLMQ_QUEUE_NAME,
+        concurrency: envVars.BULLMQ_CONCURRENCY,
+    },
+    /** Log processing configuration */
+    keywords: envVars.KEYWORDS,
 };

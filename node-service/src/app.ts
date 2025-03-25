@@ -18,7 +18,6 @@ export class App {
     private middleware(): void {
         // enable cors
         this.app.use(cors());
-
     }
 
     private routes(): void {
