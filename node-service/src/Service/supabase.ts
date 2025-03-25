@@ -5,14 +5,16 @@ import { Readable } from 'stream';
 export async function insertStatsToSupabase(payload: {
     jobId: string;
     fileId: string;
-    keywords: Record<string, number>;
+    stats: Record<string, number>;
     ipAddresses: string[];
+    errors: Array<{ level: string, message: string, jsonPayload: any, ip: string | null }>;
 }) {
     const { error } = await supabase.from('log_stats').insert({
         job_id: payload.jobId,
         file_id: payload.fileId,
-        keywords: payload.keywords,
+        stats: payload.stats,
         ip_addresses: payload.ipAddresses,
+        errors: payload.errors,
         created_at: new Date().toISOString(),
     });
 
