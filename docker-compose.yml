@@ -1,26 +1,39 @@
 services:
   redis:
-    image: redis:latest
+    image: redis:7
     container_name: redis
     ports:
       - "6379:6379"
 
-  backend:
-    build: ./backend
-    container_name: backend
+  node-service:
+    build:
+      context: ./node-service
     ports:
       - "4000:4000"
+    environment:
+      - REDIS_HOST=${REDIS_HOST}
+      - REDIS_PORT=${REDIS_PORT}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - BULLMQ_QUEUE_NAME=${BULLMQ_QUEUE_NAME}
+      - BULLMQ_CONCURRENCY=${BULLMQ_CONCURRENCY}
+      - KEYWORDS=${KEYWORDS}
+    env_file:
+      - ./node-service/.env
     depends_on:
       - redis
-    env_file:
-      - ./backend/.env
+    restart: unless-stopped
 
-  frontend:
-    build: ./frontend
-    container_name: frontend
+  web-app:
+    build:
+      context: ./web-app
     ports:
       - "3000:3000"
-    depends_on:
-      - backend
+    environment:
+      - NEXT_PUBLIC_SUPABASE_URL=${SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
     env_file:
-      - ./frontend/.env
+      - ./web-app/.env.local
+    depends_on:
+      - redis
+    restart: unless-stopped
