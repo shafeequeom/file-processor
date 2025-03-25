@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextRequest } from 'next/server';
 import { logQueue } from '@/lib/queue';
 import { errorResponse, successResponse } from '@/util/apiResponse';
 
