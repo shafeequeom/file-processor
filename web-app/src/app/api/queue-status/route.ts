@@ -1,6 +1,15 @@
-import { NextResponse } from 'next/server';
+import { NextRequest, NextResponse } from 'next/server';
+import { logQueue } from '@/lib/queue';
+import { errorResponse, successResponse } from '@/util/apiResponse';
 
-export async function GET() {
+export const dynamic = 'force-dynamic'; // avoid caching, always fetch fresh queue data
 
-    return NextResponse.json({ status: true });
+export async function GET(req: NextRequest) {
+    try {
+        const counts = await logQueue.getJobCounts();
+
+        return successResponse('Queue status fetched successfully', counts);
+    } catch (error: any) {
+        return errorResponse('Failed to fetch queue status', error.message);
+    }
 }
