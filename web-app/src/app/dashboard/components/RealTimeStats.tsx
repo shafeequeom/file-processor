@@ -27,11 +27,11 @@ export default function RealTimeStats() {
       setStatus("disconnected");
 
       // Attempt reconnection with exponential backoff
-      const delay = Math.min(1000 * Math.pow(2, retryCount), 30000);
-      setTimeout(() => {
-        setRetryCount((prev) => prev + 1);
-        connectWebSocket();
-      }, delay);
+      //   const delay = Math.min(1000 * Math.pow(2, retryCount), 30000);
+      //   setTimeout(() => {
+      //     setRetryCount((prev) => prev + 1);
+      //     connectWebSocket();
+      //   }, delay);
     };
 
     ws.onerror = (error) => {
@@ -82,7 +82,7 @@ export default function RealTimeStats() {
       </div>
       <div className="space-y-2 max-h-60 overflow-y-auto">
         {updates.map((update, i) => (
-          <div key={i} className="p-2 bg-gray-100 rounded">
+          <div key={i} className="p-2 bg-gray-100 rounded text-black">
             <pre className="text-xs">{JSON.stringify(update, null, 2)}</pre>
           </div>
         ))}
