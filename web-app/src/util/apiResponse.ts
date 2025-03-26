@@ -6,7 +6,7 @@ type ResponseType = {
     data?: any,
 }
 
-export const successResponse = function (message: string = "Success", data: any = null) {
+export const successResponse = function (message: string = "Success", data: any = null, statusCode: number = 200) {
     let response: ResponseType = {
         status: true,
         message: message,
@@ -15,7 +15,7 @@ export const successResponse = function (message: string = "Success", data: any 
     if (data) {
         response.data = data;
     }
-    return NextResponse.json(response, { status: 200 });
+    return NextResponse.json(response, { status: statusCode });
 };
 
 export const errorResponse = function (message: string = "Success", data: any = null, statusCode: number = 400) {

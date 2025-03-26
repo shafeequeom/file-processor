@@ -9,7 +9,6 @@ function getValidationObject() {
     const JoiValidationContent: any = {
         NODE_ENV: Joi.string().valid('production', 'development', 'test', 'dev').required(),
         PORT: Joi.number().default(3001),
-        SERVER: Joi.string().default('http://localhost:3000'),
         REDIS_HOST: Joi.string().required(),
         REDIS_PORT: Joi.number().default(6379),
         BULLMQ_QUEUE_NAME: Joi.string().default('log-processing-queue'),
@@ -34,7 +33,6 @@ export default {
     /** Base configuration */
     env: envVars.NODE_ENV,
     port: envVars.PORT,
-    server: envVars.SERVER,
     /** Redis configuration */
     redis: {
         host: envVars.REDIS_HOST,

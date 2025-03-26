@@ -6,8 +6,11 @@ import { parseFile } from '../Utils/parser';
 export const processLogJob = async (job: Job) => {
 
     const { filePath, fileId } = job.data;
+    const jobId = String(job.id);
+
 
     console.log(`📥 Processing log file: ${filePath}`);
+
 
     const supabaseStream = await downloadLogFileStream(filePath);
     if (!supabaseStream) {
@@ -21,11 +24,16 @@ export const processLogJob = async (job: Job) => {
 
     const statsData = await parseFile(rl);
 
+    if (!statsData) {
+        throw new Error(`Failed to parse file: ${filePath}`);
+    }
+
     // Store parsed results in Supabase
+    const stats = Object.fromEntries(statsData.stats)
     await insertStatsToSupabase({
-        jobId: String(job.id),
+        jobId: jobId,
         fileId,
-        stats: Object.fromEntries(statsData.stats),
+        stats: stats,
         ipAddresses: Array.from(statsData.ipAddresses),
         errors: statsData.errors,
     });

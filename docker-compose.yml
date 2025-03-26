@@ -11,6 +11,8 @@ services:
     ports:
       - "4000:4000"
     environment:
+      - NODE_ENV=production
+      - PORT=4000
       - REDIS_HOST=${REDIS_HOST}
       - REDIS_PORT=${REDIS_PORT}
       - SUPABASE_URL=${SUPABASE_URL}
