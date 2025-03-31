@@ -1,73 +1,73 @@
-// components/RealTimeStats.tsx
-"use client"; // <-- Add this directive
+"use client";
 
-import { useEffect, useState, useCallback } from "react";
+import { JobInterface } from "@/type/common";
+import { useEffect, useRef, useState } from "react";
 
-export default function RealTimeStats() {
-  const [updates, setUpdates] = useState<any[]>([]);
+export default function RealTimeStats({
+  onCompletion,
+}: {
+  onCompletion: (data: JobInterface) => void;
+}) {
+  const [updates, setUpdates] = useState<JobInterface[]>([]);
   const [status, setStatus] = useState<
     "connecting" | "connected" | "disconnected"
   >("connecting");
-  const [wsInstance, setWsInstance] = useState<WebSocket | null>(null);
-  const [retryCount, setRetryCount] = useState(0);
-
-  const connectWebSocket = useCallback(() => {
-    const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
-    const wsUrl = `${protocol}//${window.location.host}/api/live-stats`;
-    const ws = new WebSocket(wsUrl);
-
-    ws.onopen = () => {
-      console.log("WebSocket connected");
-      setStatus("connected");
-      setRetryCount(0);
-    };
-
-    ws.onclose = (event) => {
-      console.log("WebSocket closed:", event.code, event.reason);
-      setStatus("disconnected");
-
-      // Attempt reconnection with exponential backoff
-      //   const delay = Math.min(1000 * Math.pow(2, retryCount), 30000);
-      //   setTimeout(() => {
-      //     setRetryCount((prev) => prev + 1);
-      //     connectWebSocket();
-      //   }, delay);
-    };
-
-    ws.onerror = (error) => {
-      console.error("WebSocket error:", error);
-      setStatus("disconnected");
-    };
-
-    ws.onmessage = (event) => {
-      try {
-        const data = JSON.parse(event.data);
-        setUpdates((prev) => [...prev.slice(-9), data]); // Keep last 10 updates
-      } catch (error) {
-        console.error("Error parsing WebSocket message:", error);
-      }
-    };
-
-    setWsInstance(ws);
-  }, [retryCount]);
+  const retryCount = useRef(0);
 
   useEffect(() => {
-    connectWebSocket();
+    const connectWebSocket = () => {
+      const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
+      const wsUrl = `${protocol}//${window.location.host}/api/live-stats`;
+      const ws = new WebSocket(wsUrl);
 
-    return () => {
-      if (wsInstance) {
-        wsInstance.close();
-      }
+      ws.onopen = () => {
+        console.log("✅ WebSocket connected");
+        setStatus("connected");
+        retryCount.current = 0;
+      };
+
+      ws.onclose = () => {
+        console.log("❌ WebSocket disconnected");
+        setStatus("disconnected");
+        const delay = Math.min(1000 * Math.pow(2, retryCount.current), 30000);
+        setTimeout(() => {
+          retryCount.current++;
+          connectWebSocket();
+        }, delay);
+      };
+
+      ws.onerror = (err) => {
+        console.error("WebSocket error:", err);
+        ws.close();
+      };
+
+      ws.onmessage = (event) => {
+        try {
+          const data = JSON.parse(event.data);
+          if (data.jobId) {
+            console.log("WebSocket message:", data);
+
+            if (data.status.toLowerCase() === "completed") {
+              onCompletion(data);
+            }
+            setUpdates((prev) => [data, ...prev.slice(0, 9)]);
+          }
+        } catch (err) {
+          console.error("Failed to parse WebSocket message:", err);
+        }
+      };
     };
-  }, [connectWebSocket]);
+
+    connectWebSocket();
+  }, []);
 
   return (
-    <div className="p-4 border rounded-lg">
-      <h2 className="text-xl font-bold mb-2">Real-Time Updates</h2>
-      <div className="mb-2">
-        Status:{" "}
+    <div className="flex flex-col row-span-3 bg-white shadow rounded-lg overflow-hidden">
+      {/* Header */}
+      <div className="flex items-center justify-between px-6 py-5 font-semibold border-b border-gray-100">
+        <span>Live Job Stats</span>
         <span
-          className={`font-semibold ${
+          className={`text-sm font-medium ${
             status === "connected"
               ? "text-green-500"
               : status === "connecting"
@@ -75,17 +75,69 @@ export default function RealTimeStats() {
               : "text-red-500"
           }`}
         >
-          {status}{" "}
-          {status === "disconnected" &&
-            `(retrying in ${Math.min(30, Math.pow(2, retryCount))}s)`}
+          {status}
         </span>
       </div>
-      <div className="space-y-2 max-h-60 overflow-y-auto">
-        {updates.map((update, i) => (
-          <div key={i} className="p-2 bg-gray-100 rounded text-black">
-            <pre className="text-xs">{JSON.stringify(update, null, 2)}</pre>
-          </div>
-        ))}
+
+      {/* Scrollable Table Container */}
+      <div className="overflow-y-auto max-h-[22rem]">
+        <table className="w-full text-sm text-left text-gray-700">
+          <thead className="text-xs text-gray-500 uppercase bg-gray-50 sticky top-0 z-10">
+            <tr>
+              <th scope="col" className="px-6 py-3">
+                Job ID
+              </th>
+              <th scope="col" className="px-6 py-3">
+                File ID
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Status
+              </th>
+              <th scope="col" className="px-6 py-3">
+                Message
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            {updates.length === 0 ? (
+              <tr>
+                <td className="px-6 py-4 text-center text-gray-400" colSpan={4}>
+                  No recent updates
+                </td>
+              </tr>
+            ) : (
+              updates.map((job, i) => (
+                <tr
+                  key={i}
+                  className="bg-white border-b border-gray-100 hover:bg-gray-50 transition"
+                >
+                  <td className="px-6 py-4 font-medium text-gray-800 whitespace-nowrap">
+                    {job.jobId}
+                  </td>
+                  <td className="px-6 py-4">{job.fileId}</td>
+                  <td className="px-6 py-4 capitalize">
+                    <span
+                      className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-semibold ${
+                        job.status === "completed"
+                          ? "text-green-700 bg-green-100"
+                          : job.status === "inprogress"
+                          ? "text-blue-700 bg-blue-100"
+                          : job.status === "failed"
+                          ? "text-red-700 bg-red-100"
+                          : "text-gray-700 bg-gray-100"
+                      }`}
+                    >
+                      {job.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 text-gray-600 text-sm">
+                    {job.message || "-"}
+                  </td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </div>
     </div>
   );
