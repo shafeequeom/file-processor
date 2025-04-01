@@ -6,7 +6,7 @@ import { supabase } from "@/util/supabase/client";
 import { toast } from "react-toastify";
 
 export default function SignupPage() {
-  const [name, setName] = useState(""); // New field
+  const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -19,7 +19,7 @@ export default function SignupPage() {
       password,
       options: {
         data: {
-          full_name: name, // Save name to user_metadata
+          full_name: name,
         },
       },
     });

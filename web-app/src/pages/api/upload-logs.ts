@@ -74,10 +74,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         }
 
         // 5. Add job to queue with userId
-        const job = await logQueue.add('process-log', {
+
+        const fileSizeInBytes = file.size; // Get file size
+        const priority = Math.max(1, 10000 - fileSizeInBytes);
+        const payload = {
             filePath: upload.filePath,
             fileId: upload.fileId,
-            userId: user.id, // 👈 Pass user ID
+            userId: user.id
+        };
+
+        const job = await logQueue.add("process-log", payload, {
+            priority,
+            attempts: 3,
+            backoff: {
+                type: "exponential",
+                delay: 5000,
+            },
         });
 
         return res.status(200).json({
