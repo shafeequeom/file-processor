@@ -26,6 +26,4 @@ redisPublisher.on('error', (err) => {
 
 export async function publishJobEvent(data: any) {
     await redisPublisher.publish('job-events', JSON.stringify(data));
-    console.log('📤 Published to Redis:', data);
-
 }

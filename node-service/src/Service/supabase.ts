@@ -1,5 +1,5 @@
-import { supabase } from "../Utils/supabase";
-import { Readable } from 'stream';
+import { Readable } from 'node:stream'; // works in most setups
+import { supabase } from '../Utils/supabase';
 
 
 export async function insertStatsToSupabase(payload: {
@@ -32,14 +32,19 @@ export async function insertStatsToSupabase(payload: {
 export async function downloadLogFileStream(path: string): Promise<Readable | null> {
     const { data, error } = await supabase.storage
         .from('log-files')
-        .download(path);
+        .createSignedUrl(path, 60); // signed URL valid for 60s
 
-    if (error || !data) {
-        console.error('❌ Failed to download file from Supabase:', error?.message);
+    if (error || !data?.signedUrl) {
         return null;
     }
-    const buffer = Buffer.from(await data.arrayBuffer());
 
+    // Use native fetch to stream the file
+    const res = await fetch(data.signedUrl);
+    if (!res.ok || !res.body) {
+        return null;
+    }
 
-    return Readable.from(buffer); // convert web stream to Node stream
+    // Convert web stream to Node.js Readable
+    return Readable.fromWeb(res.body as any);
+
 }

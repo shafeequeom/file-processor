@@ -34,6 +34,16 @@ export const processLogJob = async (job: Job) => {
         crlfDelay: Infinity
     });
 
+    rl.on('error', (err) => {
+        console.error('Readline error:', err);
+        publishJobEvent({
+            jobId: jobId,
+            status: 'failed',
+            fileId: fileId,
+            message: 'Error reading file',
+        });
+    });
+
     const statsData = await parseFile(rl);
 
     if (!statsData) {
@@ -73,4 +83,6 @@ export const processLogJob = async (job: Job) => {
     });
 
     console.log(`✅ Processed file: ${filePath}`);
+    rl.close();
+    supabaseStream.destroy();
 };
