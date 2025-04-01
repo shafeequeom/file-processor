@@ -7,13 +7,13 @@ import RecentJobs from "./components/RecentJobs";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import FileUploadButton from "./components/FileUploader";
-import { JobInterface } from "@/type/common";
 import StatsViewerModal from "./components/StatsViewerModal";
 import QueueStatusCard from "./components/QueueStatusCard";
+import { JobInterface, JobUpdate, StatusData } from "@/types/job";
 
 export default function DashboardPage() {
-  const [statusData, setStatusData] = useState({});
-  const [jobsData, setJobsData] = useState([]);
+  const [statusData, setStatusData] = useState<StatusData>({});
+  const [jobsData, setJobsData] = useState<JobUpdate[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [jobId, setJobId] = useState("");
   const [showModal, setShowModal] = useState(false);
@@ -37,27 +37,31 @@ export default function DashboardPage() {
         setIsLoading(false);
         toast.error("Failed to load dashboard data");
       }
-    } catch (err: any) {
+    } catch (err: unknown) {
       setIsLoading(false);
-      toast.error("Unexpected error: " + err.message);
+      if (err instanceof Error) {
+        toast.error("Unexpected error: " + err.message);
+      } else {
+        toast.error("An unexpected error occurred");
+      }
     }
   };
 
   const handleRecentJobUpdate = (jobData: JobInterface) => {
     console.log("Job update:", jobData);
-    const transformedData = {
+    const transformedData: JobUpdate = {
       file_id: jobData.fileId,
       job_id: jobData.jobId,
       status: jobData.status,
       message: jobData.message,
-      stats: jobData.stats,
       ip_addresses: jobData.ipAddresses,
       errors: jobData.errors,
+      created_at: new Date().toISOString(),
     };
 
-    setJobsData((prevJobs: any) => {
+    setJobsData((prevJobs: JobUpdate[]) => {
       const existingJobIndex = prevJobs.findIndex(
-        (j) => j.jobId === jobData.jobId
+        (j) => j.job_id === jobData.jobId
       );
       if (existingJobIndex !== -1) {
         const updatedJobs = [...prevJobs];
@@ -131,7 +135,7 @@ export default function DashboardPage() {
         />
         <StatsCard
           icon={ServerCrash}
-          value={statusData?.uniqueIPCount || "0"}
+          value={statusData?.totalFailedJobs || "0"}
           label="Total Failed Jobs"
           iconColor="text-red-600"
           bgColor="bg-red-100"

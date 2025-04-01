@@ -1,6 +1,5 @@
 // app/(dashboard)/layout.tsx
 import React from "react";
-import Sidebar from "@/components/Sidebar";
 import Header from "@/components/Header";
 import { Metadata } from "next";
 

@@ -1,21 +1,8 @@
 "use client";
 
-import { Eye, Link } from "lucide-react";
+import { JobUpdate } from "@/types/job";
+import { Eye } from "lucide-react";
 import moment from "moment";
-
-interface JobUpdate {
-  job_id: string;
-  file_id: string;
-  status: string;
-  created_at: string;
-  ip_addresses?: string[];
-  message?: string;
-  errors?: Array<{
-    level: string;
-    message: string;
-    ip?: string;
-  }>;
-}
 
 export default function RecentJobs({
   jobs,

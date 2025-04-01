@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
-import { IncomingForm } from 'formidable';
+import { IncomingForm, Fields, Files, File } from 'formidable';
 import { v4 as uuid } from 'uuid';
 import { uploadToSupabase } from '@/lib/supabase';
 import { logQueue } from '@/lib/queue';
@@ -32,7 +32,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             {
                 cookies: {
                     getAll() {
-                        return req.cookies ? Object.entries(req.cookies).map(([name, value]) => ({ name, value })) : [];
+                        return req.cookies
+                            ? Object.entries(req.cookies)
+                                .filter(([, value]) => value !== undefined)
+                                .map(([name, value]) => ({ name, value: value as string }))
+                            : [];
                     },
                     setAll() { },
                 },
@@ -52,17 +56,22 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             multiples: false,
             uploadDir: '/tmp',
             keepExtensions: true,
-            filename: (_name, _ext, part) => `${uuid()}.log`,
+            filename: () => `${uuid()}.log`,
         });
 
-        const [fields, files] = await new Promise<[formidable.Fields, formidable.Files]>((resolve, reject) => {
+
+        // eslint-disable-next-line @typescript-eslint/no-unused-vars
+        const [fields, files] = await new Promise<[Fields, Files]>((resolve, reject) => {
             form.parse(req, (err, fields, files) => {
-                if (err) reject(err);
-                else resolve([fields, files]);
+                if (err) {
+                    reject(err);
+                } else {
+                    resolve([fields, files]);
+                }
             });
         });
 
-        const fileArray = files.file as formidable.File[];
+        const fileArray = files.file as File[];
         const file = fileArray?.[0];
 
         if (!file || !file.filepath) {
@@ -99,8 +108,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             data: { jobId: job.id },
             message: 'File uploaded successfully',
         });
-    } catch (err: any) {
-        console.error(' Upload handler error:', err);
-        return res.status(500).json({ status: false, message: err.message || 'Unexpected error' });
+    } catch (err: unknown) {
+        const errorMessage = err instanceof Error ? err.message : 'Unexpected error';
+        return res.status(500).json({ status: false, message: errorMessage });
     }
 }

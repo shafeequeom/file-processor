@@ -1,36 +1,130 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 📦 Web App - Log Processor Frontend
 
-## Getting Started
+This is the frontend application for the Log Processor platform, built with **Next.js 15.x**, **React 18.x**, and **Tailwind CSS**. It interfaces with the Supabase backend and the BullMQ-powered Node.js log processing service.
 
-First, run the development server:
+---
+
+## 🚀 Features
+
+- 📁 Upload `.log` files via drag-and-drop
+- 📊 Real-time job status with WebSocket updates
+- 🧾 Display parsed statistics: error levels, IPs, and more
+- 🛡️ Supabase Auth (Email + GitHub OAuth)
+- 🌐 API rate-limiting and secured routes
+- ✨ Clean and responsive UI with Tailwind CSS
+
+---
+
+## 🛠️ Setup Instructions
+
+### 1. Clone the Repository
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/shafeequeom/file-processor.git
+cd file-processor/web-app
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+### 2. Install Dependencies
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+yarn install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+### 3. Environment Variables
 
-## Learn More
+Create a `.env.local` file:
 
-To learn more about Next.js, take a look at the following resources:
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=https://projectcode.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=YOUR_SUPABASE_ANON_KEY
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+# Redis
+REDIS_HOST=localhost
+REDIS_PORT=6379
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Refer to `.env.example` for all options.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## 🧪 Running in Development
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+```bash
+yarn dev
+```
+
+Visit: [http://localhost:3000](http://localhost:3000)
+
+---
+
+## 📦 Production (with Docker)
+
+In the root directory, run:
+
+```bash
+docker-compose up --build
+```
+
+This will bring up both `node-service` and `web-app`.
+
+---
+
+## 🧪 Testing
+
+```bash
+yarn test
+```
+
+Includes:
+
+- ✅ Unit tests for critical components
+- ✅ Integration test for file upload flow
+- ✅ Mocked Supabase + BullMQ jobs
+
+---
+
+## 🧠 Tech Stack
+
+- **Framework**: Next.js 15
+- **Styling**: Tailwind CSS
+- **Auth**: Supabase Auth
+- **Realtime**: WebSockets (custom API route)
+- **Queue**: BullMQ
+- **Rate Limiting**: Redis (rate-limiter-flexible)
+
+---
+
+## 📂 Directory Overview
+
+```
+src/
+├── app/              # App Router structure (Next.js)
+├── pages/api/        # API route for uploads
+├── components/       # UI components
+├── util/             # Supabase client, helpers
+├── __tests__/        # Unit & integration tests
+```
+
+---
+
+## 🧼 Linting & Formatting
+
+```bash
+yarn lint
+yarn format
+```
+
+---
+
+## 🧠 Notes
+
+- File uploads are streamed and passed to the BullMQ job processor.
+- Job status updates appear live using WebSocket messages.
+- Rate limiting prevents excessive uploads from the same IP.
+
+---
+
+## 👤 Author
+
+- Shafeeque OM

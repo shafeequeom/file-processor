@@ -1,6 +1,6 @@
 "use client";
 
-import { JobInterface } from "@/type/common";
+import { JobInterface } from "@/types/job";
 import { useEffect, useRef, useState } from "react";
 
 export default function RealTimeStats({
@@ -13,7 +13,6 @@ export default function RealTimeStats({
     "connecting" | "connected" | "disconnected"
   >("connecting");
   const retryCount = useRef(0);
-
   useEffect(() => {
     const connectWebSocket = () => {
       const protocol = window.location.protocol === "https:" ? "wss:" : "ws:";
@@ -21,13 +20,13 @@ export default function RealTimeStats({
       const ws = new WebSocket(wsUrl);
 
       ws.onopen = () => {
-        console.log("✅ WebSocket connected");
+        console.log("WebSocket connected");
         setStatus("connected");
         retryCount.current = 0;
       };
 
       ws.onclose = () => {
-        console.log("❌ WebSocket disconnected");
+        console.log("WebSocket disconnected");
         setStatus("disconnected");
         const delay = Math.min(1000 * Math.pow(2, retryCount.current), 30000);
         setTimeout(() => {
@@ -59,7 +58,7 @@ export default function RealTimeStats({
     };
 
     connectWebSocket();
-  }, []);
+  }, [onCompletion]);
 
   return (
     <div className="flex flex-col row-span-3 bg-white shadow rounded-lg overflow-hidden">

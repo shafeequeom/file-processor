@@ -1,12 +1,13 @@
 "use client";
 
 import { useRef, useState } from "react";
+import { toast } from "react-toastify";
 
 export default function FileUploadButton() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
-  const [jobId, setJobId] = useState<string | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  // const [jobId, setJobId] = useState<string | null>(null);
+  // const [error, setError] = useState<string | null>(null);
 
   const triggerFileInput = () => {
     fileInputRef.current?.click();
@@ -20,8 +21,8 @@ export default function FileUploadButton() {
     formData.append("file", file);
 
     setUploading(true);
-    setError(null);
-    setJobId(null);
+    // setError(null);
+    // setJobId(null);
 
     try {
       const res = await fetch("/api/upload-logs", {
@@ -32,12 +33,18 @@ export default function FileUploadButton() {
       const data = await res.json();
 
       if (res.ok && data?.data?.jobId) {
-        setJobId(data.jobId);
+        toast.success(`File uploaded successfully! Job ID: ${data.data.jobId}`);
       } else {
-        setError(data.error || "Upload failed");
+        toast.error("File upload failed: " + data.message);
       }
-    } catch (err: any) {
-      setError("Unexpected error: " + err.message);
+    } catch (err: unknown) {
+      if (err instanceof Error) {
+        // handle the error with a specific message
+        toast.error("Unexpected error: " + err.message);
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
+      // setError("Unexpected error: " + err.message);
     } finally {
       setUploading(false);
       if (fileInputRef.current) fileInputRef.current.value = ""; // reset file input

@@ -19,7 +19,8 @@ export async function GET(req: NextRequest) {
         const counts = await logQueue.getJobCounts();
 
         return successResponse('Queue status fetched successfully', counts);
-    } catch (error: any) {
-        return errorResponse('Failed to fetch queue status', error.message);
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        return errorResponse('Failed to fetch queue status', errorMessage);
     }
 }

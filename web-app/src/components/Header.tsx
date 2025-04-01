@@ -1,5 +1,6 @@
 "use client";
 
+import { UserType } from "@/types/user";
 import { supabase } from "@/util/supabase/client";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
@@ -8,7 +9,8 @@ import { useEffect, useState } from "react";
 export default function Header() {
   const router = useRouter();
   const [userName, setUserName] = useState<string>("");
-  const [user, setUser] = useState<any>({});
+
+  const [user, setUser] = useState<UserType | null>(null);
 
   useEffect(() => {
     const getUser = async () => {
@@ -20,7 +22,7 @@ export default function Header() {
         setUserName(
           data.user.user_metadata?.full_name || data.user.email || "User"
         );
-        setUser(data.user);
+        setUser(data.user as UserType);
       }
     };
     getUser();

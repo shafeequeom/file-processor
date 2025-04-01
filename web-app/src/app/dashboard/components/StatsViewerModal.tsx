@@ -64,8 +64,10 @@ export default function StatsViewerModal({ jobId, isOpen, onClose }: Props) {
         const json = await res.json();
         if (!res.ok) throw new Error(json?.message || "Failed to fetch stats");
         dispatch({ type: "SUCCESS", payload: json.data });
-      } catch (err: any) {
-        dispatch({ type: "ERROR", payload: err.message });
+      } catch (err: unknown) {
+        const errorMessage =
+          err instanceof Error ? err.message : "An unknown error occurred";
+        dispatch({ type: "ERROR", payload: errorMessage });
       }
     };
 

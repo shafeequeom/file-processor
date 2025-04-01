@@ -25,7 +25,7 @@ nextApp.prepare().then(() => {
 
     wss.on('connection', (ws: AliveWebSocket) => {
         clients.add(ws);
-        console.log('✅ WebSocket client connected');
+        console.log('WebSocket client connected');
 
         ws.send(JSON.stringify({ message: 'Hello from /api/live-stats' }));
 
@@ -41,13 +41,14 @@ nextApp.prepare().then(() => {
 
         ws.on('close', () => {
             clients.delete(ws);
-            console.log('❌ WebSocket client disconnected');
+            console.log('WebSocket client disconnected');
         });
     });
 
     // Heartbeat interval to detect dead connections
-    const interval = setInterval(() => {
-        clients.forEach((ws: any) => {
+    setInterval(() => {
+
+        clients.forEach((ws: any) => { // eslint-disable-line
             if (ws.isAlive === false) {
                 console.log('💀 Terminating dead socket');
                 return ws.terminate();
@@ -68,7 +69,7 @@ nextApp.prepare().then(() => {
         } else if (pathname === '/_next/webpack-hmr') {
             nextApp.getUpgradeHandler()(req, socket, head);
         } else {
-            console.warn('❌ Unknown upgrade path:', pathname);
+            console.warn('Unknown upgrade path:', pathname);
             socket.destroy();
         }
     });
@@ -76,7 +77,7 @@ nextApp.prepare().then(() => {
     // Subscribe to Redis events and broadcast to clients
     sub.subscribe('job-events', (err, count) => {
         if (err) {
-            console.error('❌ Failed to subscribe to Redis channel:', err);
+            console.error('Failed to subscribe to Redis channel:', err);
         } else {
             console.log(`📡 Subscribed to ${count} Redis channel(s): job-events`);
         }
@@ -92,6 +93,6 @@ nextApp.prepare().then(() => {
     });
 
     server.listen(3000, () => {
-        console.log('🚀 Server listening on http://localhost:3000');
+        console.log('Server listening on http://localhost:3000');
     });
 });

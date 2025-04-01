@@ -5,7 +5,7 @@
   "scripts": {
     "dev": "ts-node src/server.ts",
     "build": "next build",
-    "start": "node dist/server.js",
+    "start": "NODE_ENV=production ts-node server.ts",
     "lint": "next lint",
     "test": "jest --detectOpenHandles --passWithNoTests"
   },
@@ -31,7 +31,7 @@
   "devDependencies": {
     "@babel/preset-typescript": "^7.27.0",
     "@eslint/eslintrc": "^3",
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.0",
     "@types/formidable": "^3.4.5",
     "@types/jest": "^29.5.14",
     "@types/node": "^20",
@@ -39,12 +39,14 @@
     "@types/react-dom": "^19",
     "@types/socket.io": "^3.0.2",
     "@types/ws": "^8.18.0",
+    "autoprefixer": "^10.4.21",
     "babel-jest": "^29.7.0",
     "eslint": "^9",
     "eslint-config-next": "15.2.3",
     "jest": "^29.7.0",
     "node-mocks-http": "^1.16.2",
-    "tailwindcss": "^4",
+    "postcss": "^8.5.3",
+    "tailwindcss": "^4.1.0",
     "ts-jest": "^29.3.1",
     "ts-node": "^10.9.2",
     "typescript": "^5"

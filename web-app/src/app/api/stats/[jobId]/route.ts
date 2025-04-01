@@ -3,14 +3,17 @@ import { errorResponse, notFoundResponse, successResponse } from '@/util/apiResp
 import { createClient } from '@/util/supabase/server';
 import { NextRequest } from 'next/server';
 
-export async function GET(req: NextRequest, context: { params: { jobId: string } }) {
-    const { jobId } = context.params;
+export async function GET(
+    req: NextRequest,
+    { params }: { params: Promise<{ jobId: string }> }
+) {
+    const { jobId } = await params;
 
     if (!jobId) {
         return errorResponse('Job ID is required');
     }
 
-    const ip = req.headers.get('x-forwarded-for')?.toString() || '127.0.0.1';
+    const ip = req.headers.get('x-forwarded-for') ?? '127.0.0.1';
 
     try {
         await rateLimiter.consume(ip);
@@ -18,9 +21,7 @@ export async function GET(req: NextRequest, context: { params: { jobId: string }
         return errorResponse("Too many requests", null, 429);
     }
 
-
-    const supabase = await createClient(); // Accept token manually
-
+    const supabase = await createClient();
 
     const { data, error } = await supabase
         .from('log_stats')

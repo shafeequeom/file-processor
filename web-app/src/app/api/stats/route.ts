@@ -20,7 +20,8 @@ export async function GET(req: NextRequest) {
         if (error) throw error;
 
         return successResponse('Stats fetched successfully', data);
-    } catch (error: any) {
-        return errorResponse(error.message || 'Failed to fetch stats');
+    } catch (error: unknown) {
+        const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+        return errorResponse('Failed to fetch queue status', errorMessage);
     }
 }

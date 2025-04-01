@@ -28,8 +28,12 @@ export default function QueueStatusCard() {
         } else {
           toast.error(json.message || "Failed to fetch queue status");
         }
-      } catch (err: any) {
-        toast.error("Unexpected error: " + err.message);
+      } catch (err: unknown) {
+        if (err instanceof Error) {
+          toast.error("Unexpected error: " + err.message);
+        } else {
+          toast.error("An unexpected error occurred");
+        }
       } finally {
         setLoading(false);
       }

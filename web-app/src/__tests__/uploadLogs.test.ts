@@ -1,8 +1,7 @@
+/* eslint-disable */
 // uploadLogs.test.ts
 import handler from "@/pages/api/upload-logs";
 import httpMocks from "node-mocks-http";
-import { uploadToSupabase } from "@/lib/supabase";
-import { logQueue } from "@/lib/queue";
 import { IncomingMessage, ServerResponse } from "http";
 
 // Mocks

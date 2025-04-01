@@ -1,6 +1,6 @@
-import { parseFile } from '../src/Utils/parser';
+import { parseFile } from "../Utils/parser";
 
-jest.mock('../src/Common/Config/config', () => ({
+jest.mock('../Common/Config/config', () => ({
     __esModule: true,
     default: {
         keywords: 'ERROR,WARN'
