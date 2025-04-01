@@ -1,10 +1,10 @@
-import { NextRequest } from 'next/server'
+import { NextRequest } from 'next/server';
 import { updateSession } from './util/supabase/middleware';
 
-
 export async function middleware(req: NextRequest) {
-    const supabase = updateSession(req);
-    return supabase;
+
+    // Apply Supabase session logic to all protected routes
+    return await updateSession(req);
 }
 
 export const config = {

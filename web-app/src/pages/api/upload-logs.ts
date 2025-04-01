@@ -4,7 +4,7 @@ import { v4 as uuid } from 'uuid';
 import { uploadToSupabase } from '@/lib/supabase';
 import { logQueue } from '@/lib/queue';
 import { createServerClient } from '@supabase/ssr'
-import { cookies } from 'next/headers';
+import { rateLimiter } from '@/lib/rateLimiter';
 
 // Ensure formidable can parse
 export const config = {
@@ -16,6 +16,14 @@ export const config = {
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
     if (req.method !== 'POST') {
         return res.status(405).json({ status: false, message: 'Method Not Allowed' });
+    }
+
+    const ip = req.headers['x-forwarded-for']?.toString() || req.socket.remoteAddress || '127.0.0.1';
+
+    try {
+        await rateLimiter.consume(ip);
+    } catch {
+        return res.status(429).json({ status: false, message: 'Too many requests' });
     }
 
     try {
@@ -98,7 +106,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             message: 'File uploaded successfully',
         });
     } catch (err: any) {
-        console.error("❌ Upload handler error:", err);
+        console.error(" Upload handler error:", err);
         return res.status(500).json({ status: false, message: err.message || 'Unexpected error' });
     }
 }
