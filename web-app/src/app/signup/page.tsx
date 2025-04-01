@@ -6,6 +6,7 @@ import { supabase } from "@/util/supabase/client";
 import { toast } from "react-toastify";
 
 export default function SignupPage() {
+  const [name, setName] = useState(""); // New field
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [message, setMessage] = useState<string | null>(null);
@@ -16,12 +17,18 @@ export default function SignupPage() {
     const { data, error } = await supabase.auth.signUp({
       email,
       password,
+      options: {
+        data: {
+          full_name: name, // Save name to user_metadata
+        },
+      },
     });
 
     if (error) {
       toast.error(error.message);
     } else if (data.user) {
-      router.push("/login");
+      toast.success("Signup successful!");
+      router.push("/dashboard");
     }
   };
 
@@ -35,8 +42,16 @@ export default function SignupPage() {
     <div className="flex items-center justify-center w-full h-screen bg-gray-100 p-4">
       <div className="bg-white shadow-md rounded-2xl p-6 w-full max-w-sm space-y-6 border border-gray-200">
         <h1 className="text-2xl font-semibold text-center text-gray-800">
-          Sign Up
+          Create an Account
         </h1>
+
+        <input
+          type="text"
+          placeholder="Full Name"
+          className="w-full border px-3 py-2 rounded-md focus:outline-none focus:ring focus:ring-blue-200"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
         <input
           type="email"
@@ -58,7 +73,7 @@ export default function SignupPage() {
           onClick={handleSignup}
           className="w-full bg-blue-600 hover:bg-blue-700 text-white py-2 rounded-md font-medium transition cursor-pointer"
         >
-          Create Account
+          Sign Up
         </button>
 
         {message && (
