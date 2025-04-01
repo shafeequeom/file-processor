@@ -8,6 +8,7 @@ export async function insertStatsToSupabase(payload: {
     stats: Record<string, number>;
     ipAddresses: string[];
     errors: Array<{ level: string, message: string, jsonPayload: any, ip: string | null }>;
+    userId: string;
 }) {
     const { error } = await supabase.from('log_stats').insert({
         job_id: payload.jobId,
@@ -16,6 +17,7 @@ export async function insertStatsToSupabase(payload: {
         ip_addresses: payload.ipAddresses,
         errors: payload.errors,
         created_at: new Date().toISOString(),
+        user_id: payload.userId,
     });
 
     if (error) {

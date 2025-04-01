@@ -6,7 +6,7 @@ import { publishJobEvent, } from '../Utils/redis';
 
 export const processLogJob = async (job: Job) => {
 
-    const { filePath, fileId } = job.data;
+    const { filePath, fileId, userId } = job.data;
     const jobId = String(job.id);
 
     console.log(`📥 Processing log file: ${filePath}`);
@@ -59,6 +59,7 @@ export const processLogJob = async (job: Job) => {
         stats: stats,
         ipAddresses: Array.from(statsData.ipAddresses),
         errors: statsData.errors,
+        userId: userId,
     });
 
     await publishJobEvent({
