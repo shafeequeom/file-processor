@@ -48,14 +48,14 @@ export default function RecentJobs({
                   Loading...
                 </td>
               </tr>
-            ) : jobs.length === 0 ? (
+            ) : jobs?.length === 0 ? (
               <tr className="text-center text-gray-400">
                 <td className="px-6 py-4" colSpan={5}>
                   No recent jobs
                 </td>
               </tr>
             ) : (
-              jobs.map((job, i) => (
+              jobs?.map((job, i) => (
                 <tr
                   key={i}
                   className="bg-white border-b border-gray-100 hover:bg-gray-50 transition"

@@ -1,5 +1,5 @@
 import { errorResponse, notFoundResponse, successResponse } from '@/util/apiResponse';
-import { supabase } from '@/util/supabase';
+import { createClient } from '@/util/supabase/server';
 import { NextRequest } from 'next/server';
 
 export async function GET(req: NextRequest, context: { params: { jobId: string } }) {
@@ -8,6 +8,9 @@ export async function GET(req: NextRequest, context: { params: { jobId: string }
     if (!jobId) {
         return errorResponse('Job ID is required');
     }
+
+    const supabase = await createClient(); // Accept token manually
+
 
     const { data, error } = await supabase
         .from('log_stats')

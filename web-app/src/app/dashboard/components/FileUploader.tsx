@@ -57,7 +57,7 @@ export default function FileUploadButton() {
       <button
         onClick={triggerFileInput}
         disabled={uploading}
-        className="inline-flex px-5 py-3 text-white bg-purple-600 hover:bg-purple-700 focus:bg-purple-700 rounded-md ml-6 mb-3"
+        className="inline-flex px-5 py-3 text-white bg-purple-600 hover:bg-purple-700 focus:bg-purple-700 rounded-md ml-6 mb-3 cursor-pointer"
       >
         <svg
           aria-hidden="true"

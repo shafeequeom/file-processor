@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { supabase } from "@/util/supabase";
+import { supabase } from "@/util/supabase/client";
 import { toast } from "react-toastify";
 
 export default function LoginPage() {
@@ -22,13 +22,14 @@ export default function LoginPage() {
   }, [router]);
 
   const handleLogin = async () => {
-    const { error } = await supabase.auth.signInWithPassword({
+    const { error, data } = await supabase.auth.signInWithPassword({
       email,
       password,
     });
     if (error) {
       toast.error(error.message);
     } else {
+      console.log("Login successful", data);
       toast.success("Logged in successfully!");
       router.push("/dashboard");
     }
@@ -66,7 +67,7 @@ export default function LoginPage() {
 
           <button
             onClick={handleLogin}
-            className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition"
+            className="w-full bg-purple-600 text-white py-2 rounded-lg hover:bg-purple-700 transition cursor-pointer"
           >
             Sign in with Email
           </button>
@@ -78,10 +79,17 @@ export default function LoginPage() {
 
         <button
           onClick={() => handleOAuth("github")}
-          className="w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-900 transition"
+          className="w-full bg-gray-800 text-white py-2 rounded-lg hover:bg-gray-900 transition cursor-pointer"
         >
           Continue with GitHub
         </button>
+
+        <p className="text-sm text-center text-gray-500">
+          Don&apos;t have an account?{" "}
+          <a href="/signup" className="text-blue-600 hover:underline">
+            Signup
+          </a>
+        </p>
       </div>
     </main>
   );

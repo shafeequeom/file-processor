@@ -1,13 +1,13 @@
 import { NextResponse } from 'next/server';
 
-type ResponseType = {
+type ResponseType<T> = {
     status: boolean,
     message: string,
-    data?: any,
+    data?: T,
 }
 
-export const successResponse = function (message: string = "Success", data: any = null, statusCode: number = 200) {
-    let response: ResponseType = {
+export const successResponse = function <T>(message: string = "Success", data: T | null = null, statusCode: number = 200) {
+    const response: ResponseType<T> = {
         status: true,
         message: message,
     };
@@ -18,8 +18,8 @@ export const successResponse = function (message: string = "Success", data: any 
     return NextResponse.json(response, { status: statusCode });
 };
 
-export const errorResponse = function (message: string = "Success", data: any = null, statusCode: number = 400) {
-    let response: ResponseType = {
+export const errorResponse = function <T>(message: string = "Success", data: T | null = null, statusCode: number = 400) {
+    const response: ResponseType<T> = {
         status: false,
         message: message,
     };

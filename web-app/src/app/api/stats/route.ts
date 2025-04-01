@@ -1,5 +1,5 @@
 import { errorResponse, successResponse } from '@/util/apiResponse';
-import { supabase } from '@/util/supabase';
+import { supabase } from '@/util/supabase/client';
 import { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';

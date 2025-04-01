@@ -1,6 +1,6 @@
 "use client";
 
-import { ServerCrash, Cpu, Computer, AlertTriangle } from "lucide-react";
+import { ServerCrash, Cpu, Computer, AlertTriangle, Eye } from "lucide-react";
 import StatsCard from "./components/StatsCard";
 import RealTimeStats from "./components/RealTimeStats";
 import RecentJobs from "./components/RecentJobs";
@@ -8,11 +8,15 @@ import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import FileUploadButton from "./components/FileUploader";
 import { JobInterface } from "@/type/common";
+import StatsViewerModal from "./components/StatsViewerModal";
 
 export default function DashboardPage() {
   const [statusData, setStatusData] = useState({});
   const [jobsData, setJobsData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [jobId, setJobId] = useState("");
+  const [showModal, setShowModal] = useState(false);
+
   const loadDashboardData = async () => {
     setIsLoading(true);
     setStatusData({});
@@ -25,10 +29,8 @@ export default function DashboardPage() {
       if (res.ok) {
         const data = await res.json();
         const { recentJobs, ...stats } = data?.data;
-        console.log("Dashboard data:", data);
-
-        setStatusData(stats);
-        setJobsData(recentJobs);
+        setStatusData(stats || {});
+        setJobsData(recentJobs || []);
         setIsLoading(false);
       } else {
         setIsLoading(false);
@@ -65,9 +67,22 @@ export default function DashboardPage() {
     });
   };
 
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    const input = e.target as HTMLFormElement;
+    const jobIdInput = input.jobId.value.trim();
+    if (!jobIdInput) {
+      toast.error("Please enter a job ID");
+      return;
+    }
+    setJobId(jobIdInput);
+    setShowModal(true);
+  };
+
   useEffect(() => {
     loadDashboardData();
   }, []);
+
   return (
     <>
       <div className="flex flex-col space-y-6 md:space-y-0 md:flex-row justify-between">
@@ -75,7 +90,25 @@ export default function DashboardPage() {
           <h1 className="text-4xl font-semibold mb-2">Dashboard</h1>
           <h2 className="text-gray-600 ml-0.5">Jobs Analytics </h2>
         </div>
-        <div className="flex flex-wrap items-start justify-end -mb-3">
+        <div className="flex flex-wrap justify-end gap-4">
+          <form onSubmit={handleSubmit}>
+            <div className="flex h-12 border rounded-lg overflow-hidden focus-within:ring-2 focus-within:ring-purple-500">
+              <input
+                type="text"
+                name="jobId"
+                placeholder="Enter Job ID..."
+                className="w-52 px-4 text-sm text-gray-700 focus:outline-none"
+              />
+              <button
+                type="submit"
+                className="flex items-center gap-2 px-4 text-sm font-medium text-white bg-purple-600 hover:bg-purple-700 transition"
+              >
+                <Eye className="h-4 w-4" />
+                View Status
+              </button>
+            </div>
+          </form>
+
           <FileUploadButton />
         </div>
       </div>
@@ -121,6 +154,12 @@ export default function DashboardPage() {
           <RealTimeStats onCompletion={handleRecentJobUpdate} />
         </div>
       </section>
+
+      <StatsViewerModal
+        jobId={jobId}
+        isOpen={showModal}
+        onClose={() => setShowModal(false)}
+      />
     </>
   );
 }

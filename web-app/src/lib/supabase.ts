@@ -1,7 +1,7 @@
 import fs from 'fs';
 import { v4 as uuid } from 'uuid';
 import type { File } from 'formidable';
-import { supabase } from '@/util/supabase'
+import { supabase } from '@/util/supabase/client'
 
 export async function uploadToSupabase(file: File, fileId = uuid()) {
     const filePath = `logs/${fileId}.log`;
