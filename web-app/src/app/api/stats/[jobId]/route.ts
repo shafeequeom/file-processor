@@ -20,7 +20,7 @@ export async function GET(req: NextRequest, context: { params: { jobId: string }
 
     if (error) {
         console.error('❌ Failed to fetch stats:', error.message);
-        return notFoundResponse("File not found");
+        return notFoundResponse("Job not found");
     }
 
     return successResponse('Stats fetched successfully', data);

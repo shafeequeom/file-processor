@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import FileUploadButton from "./components/FileUploader";
 import { JobInterface } from "@/type/common";
 import StatsViewerModal from "./components/StatsViewerModal";
+import QueueStatusCard from "./components/QueueStatusCard";
 
 export default function DashboardPage() {
   const [statusData, setStatusData] = useState({});
@@ -143,6 +144,10 @@ export default function DashboardPage() {
           iconColor="text-orange-600"
           bgColor="bg-orange-100"
         />
+      </section>
+
+      <section className="grid md:grid-cols-1 xl:grid-cols-1 gap-6">
+        <QueueStatusCard />
       </section>
 
       {/* Lower Grid */}
