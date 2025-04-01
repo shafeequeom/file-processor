@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "lucide-react";
+import { Eye, Link } from "lucide-react";
 import moment from "moment";
 
 interface JobUpdate {
@@ -20,9 +20,11 @@ interface JobUpdate {
 export default function RecentJobs({
   jobs,
   isLoading,
+  onView,
 }: {
   jobs: JobUpdate[];
   isLoading: boolean;
+  onView: (jobId: string) => void;
 }) {
   return (
     <div className="flex flex-col row-span-3 bg-white shadow rounded-lg">
@@ -74,12 +76,12 @@ export default function RecentJobs({
                     {job.ip_addresses ? job.ip_addresses.length : 0}
                   </td>
                   <td className="px-6 py-4">
-                    <Link
-                      href={`/dashboard/jobs/${job.job_id}`}
-                      className="text-blue-600 hover:text-blue-800"
-                    >
-                      Get Details
-                    </Link>
+                    <Eye
+                      className="h-4 w-4 text-purple-600 cursor-pointer hover:text-gray-600 "
+                      onClick={() => {
+                        onView(job.job_id);
+                      }}
+                    />
                   </td>
                 </tr>
               ))

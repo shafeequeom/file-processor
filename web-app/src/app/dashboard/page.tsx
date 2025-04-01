@@ -76,7 +76,13 @@ export default function DashboardPage() {
       toast.error("Please enter a job ID");
       return;
     }
+    input.reset();
     setJobId(jobIdInput);
+    setShowModal(true);
+  };
+
+  const handleViewJob = (jobId: string) => {
+    setJobId(jobId);
     setShowModal(true);
   };
 
@@ -153,7 +159,11 @@ export default function DashboardPage() {
       {/* Lower Grid */}
       <section className="grid grid-cols-1 xl:grid-cols-4 xl:grid-rows-3 xl:grid-flow-col gap-6">
         <div className="col-span-2 row-span-2">
-          <RecentJobs jobs={jobsData} isLoading={isLoading} />
+          <RecentJobs
+            jobs={jobsData}
+            isLoading={isLoading}
+            onView={handleViewJob}
+          />
         </div>
         <div className="col-span-2 row-span-3">
           <RealTimeStats onCompletion={handleRecentJobUpdate} />
