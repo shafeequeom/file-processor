@@ -78,6 +78,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
             return res.status(400).json({ status: false, message: 'No file uploaded' });
         }
 
+        // Check if the file is a .log file
+        const fileExt = file.originalFilename?.split('.').pop();
+        if (fileExt?.toLowerCase() !== 'log') {
+            return res.status(400).json({ status: false, message: 'Only .log files are allowed' });
+        }
+
         const fileId = uuid();
         const upload = await uploadToSupabase(file, fileId);
 
