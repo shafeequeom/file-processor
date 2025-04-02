@@ -49,9 +49,7 @@ export default function RealTimeStats({
               onCompletion(data);
             }
             setUpdates((prev) => {
-              const updated = prev.filter(
-                (job) => job.jobId !== data.jobId && job.status !== data.status
-              );
+              const updated = prev.filter((job) => job.jobId != data.jobId);
               return [data, ...updated];
             });
           }
