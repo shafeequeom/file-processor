@@ -1,0 +1,17 @@
+// tsconfig.build.json
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "noEmit": false, // ✅ allow emitting files
+        "outDir": "./dist", // ✅ put compiled files here
+        "rootDir": "./src", // ✅ needed so src/server.ts becomes dist/server.js
+        "module": "CommonJS", // required for Node.js runtime
+        "target": "ES2020",
+        "esModuleInterop": true,
+        "resolveJsonModule": true,
+        "allowSyntheticDefaultImports": true
+    },
+    "include": [
+        "src/server.ts"
+    ]
+}

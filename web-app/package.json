@@ -5,9 +5,10 @@
   "scripts": {
     "dev": "ts-node src/server.ts",
     "build": "next build",
-    "start": "NODE_ENV=production ts-node server.ts",
+    "start": "node dist/server.js",
     "lint": "next lint",
-    "test": "jest --detectOpenHandles --passWithNoTests"
+    "test": "jest --detectOpenHandles --passWithNoTests",
+    "build:server": "tsc -p tsconfig.build.json"
   },
   "dependencies": {
     "@socket.io/redis-adapter": "^8.3.0",
