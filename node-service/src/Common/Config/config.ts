@@ -14,6 +14,8 @@ function getValidationObject() {
         BULLMQ_QUEUE_NAME: Joi.string().default('log-processing-queue'),
         BULLMQ_CONCURRENCY: Joi.number().default(4),
         KEYWORDS: Joi.string().default('ERROR,FAIL,EXCEPTION'),
+        SUPABASE_URL: Joi.string().required(),
+        SUPABASE_SERVICE_ROLE_KEY: Joi.string().required(),
     };
 
     return JoiValidationContent;
@@ -45,4 +47,9 @@ export default {
     },
     /** Log processing configuration */
     keywords: envVars.KEYWORDS,
+    /** Supabase configuration */
+    supabase: {
+        url: envVars.SUPABASE_URL,
+        serviceRoleKey: envVars.SUPABASE_SERVICE_ROLE_KEY,
+    }
 };

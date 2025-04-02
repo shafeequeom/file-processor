@@ -16,11 +16,11 @@ const redisPublisher = new Redis({
 
 
 redisPublisher.on('connect', () => {
-    console.log('🔌 Redis publisher connected (node-service)');
+    console.log('Redis publisher connected (node-service)');
 });
 
 redisPublisher.on('error', (err) => {
-    console.error('❌ Redis publish error:', err);
+    console.error('Redis publish error:', err);
 });
 
 

@@ -60,6 +60,7 @@ export const processLogJob = async (job: Job) => {
         jobId: jobId,
         status: 'inprogress',
         fileId: fileId,
+        message: 'File parsed and job in progress',
     });
     // Store parsed results in Supabase
     const stats = Object.fromEntries(statsData.stats)

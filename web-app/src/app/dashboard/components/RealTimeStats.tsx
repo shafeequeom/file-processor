@@ -43,13 +43,17 @@ export default function RealTimeStats({
       ws.onmessage = (event) => {
         try {
           const data = JSON.parse(event.data);
-          if (data.jobId) {
-            console.log("WebSocket message:", data);
 
-            if (data.status.toLowerCase() === "completed") {
+          if (data.jobId) {
+            if (data?.status?.toLowerCase() === "completed") {
               onCompletion(data);
             }
-            setUpdates((prev) => [data, ...prev.slice(0, 9)]);
+            setUpdates((prev) => {
+              const updated = prev.filter(
+                (job) => job.jobId !== data.jobId && job.status !== data.status
+              );
+              return [data, ...updated];
+            });
           }
         } catch (err) {
           console.error("Failed to parse WebSocket message:", err);

@@ -38,6 +38,7 @@ export default function FileUploadButton() {
         toast.error("File upload failed: " + data.message);
       }
     } catch (err: unknown) {
+      setUploading(false);
       if (err instanceof Error) {
         // handle the error with a specific message
         toast.error("Unexpected error: " + err.message);
